@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản trị Chuỗi cung ứng</title>
+    <!-- Nhúng thư viện Ethers.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <h1>Bảng điều khiển Nông dân & Vận chuyển</h1>
+    <button id="btnConnect" onclick="connectWallet()">Kết nối Ví MetaMask</button>
+    <p id="walletAddress">Chưa kết nối ví</p>
+    <hr>
+
+    <!-- Form Khởi tạo lô hàng -->
+    <h3>1. Khởi tạo lô hàng (Dành cho Nông dân)</h3>
+    <input type="text" id="productName" placeholder="Nhập tên nông sản (VD: Xoài)">
+    <button onclick="handleCreateProduct()">Tạo lô hàng</button>
+
+    <!-- Form Cập nhật trạng thái -->
+    <h3>2. Cập nhật trạng thái (Dành cho Vận chuyển)</h3>
+    <input type="number" id="productId" placeholder="ID Lô hàng">
+    <input type="text" id="location" placeholder="Vị trí hiện tại">
+    <select id="status">
+        <option value="Đã thu hoạch">Đã thu hoạch</option>
+        <option value="Đang vận chuyển">Đang vận chuyển</option>
+        <option value="Đã nhập kho">Đã nhập kho</option>
+    </select>
+    <button onclick="handleUpdateStatus()">Cập nhật</button>
+
+    <script src="admin.js"></script>
+    <!-- Lớp phủ Loading (Mặc định ẩn) -->
+    <div id="loadingOverlay" class="hidden">
+        <div class="spinner"></div>
+        <p>Đang chờ thợ đào xác nhận giao dịch...<br>Vui lòng không đóng trình duyệt!</p>
+    </div>
+</body>
+</html>

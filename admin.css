@@ -1,0 +1,140 @@
+/* Reset cơ bản và thiết lập font chữ */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    line-height: 1.6;
+}
+
+/* Tiêu đề chính */
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* Trạng thái ví */
+#walletAddress {
+    text-align: center;
+    font-style: italic;
+    color: #7f8c8d;
+    background: #e8f4f8;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 30px;
+}
+
+/* Nút kết nối ví nổi bật */
+#btnConnect {
+    background-color: #f39c12;
+    display: block;
+    margin: 0 auto 10px auto;
+    width: 250px;
+    font-weight: bold;
+}
+
+#btnConnect:hover {
+    background-color: #d68910;
+}
+
+/* Tiêu đề của từng Form */
+h3 {
+    color: #2980b9;
+    border-bottom: 2px solid #bdc3c7;
+    padding-bottom: 10px;
+    margin-top: 40px;
+}
+
+/* Kiểu dáng cho các ô nhập liệu và dropdown */
+input[type="text"], 
+input[type="number"], 
+select {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0 20px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: border 0.3s;
+}
+
+input[type="text"]:focus, 
+input[type="number"]:focus, 
+select:focus {
+    border-color: #2980b9;
+    outline: none;
+}
+
+/* Kiểu dáng chung cho các nút bấm */
+button {
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background 0.3s, transform 0.1s;
+}
+
+button:hover {
+    background-color: #1f618d;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: #d5dbdb;
+    margin: 30px 0;
+}
+/* --- HIỆU ỨNG LOADING CHỜ BLOCKCHAIN --- */
+
+/* Lớp phủ làm tối toàn bộ màn hình, chặn người dùng bấm lung tung */
+#loadingOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    z-index: 9999; /* Luôn nổi lên trên cùng */
+    text-align: center;
+    font-size: 18px;
+}
+
+/* Lớp dùng để ẩn mảng Loading đi */
+.hidden {
+    display: none !important;
+}
+
+/* Vòng xoay (Spinner) */
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid #f3f3f3; /* Màu viền nhạt */
+    border-top: 6px solid #f39c12; /* Màu viền đậm (chạy xoay) */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+/* Khai báo chuyển động xoay 360 độ */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
