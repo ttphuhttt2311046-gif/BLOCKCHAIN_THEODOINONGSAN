@@ -1,0 +1,54 @@
+body {
+    font-family: sans-serif;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 16px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+input,
+select,
+button {
+    font-size: 16px;
+    padding: 8px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background 0.3s, transform 0.1s;
+}
+
+.section {
+    margin: 20px 0;
+}
+
+.item {
+    border-left: 3px solid #ccc;
+    padding: 8px 12px;
+    margin: 12px 0;
+}
+
+.ok {
+    color: green;
+}
+
+.bad {
+    color: red;
+}
+
+#walletAddress {
+    margin: 10px 0;
+}
