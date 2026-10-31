@@ -1,44 +1,91 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
     font-family: sans-serif;
     max-width: 1000px;
     margin: 40px auto;
     padding: 0 16px;
+    line-height: 1.5;
 }
 
-h1 {
+h2 {
     text-align: center;
-    margin-bottom: 20px;
+    margin: 0 0 20px;
+    font-size: clamp(20px, 4vw, 26px);
 }
 
-input,
-select,
+/* Thanh tìm kiếm: cạnh nhau trên PC, xếp dọc trên điện thoại */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.toolbar input {
+    flex: 1 1 260px;
+}
+
+input {
+    font-size: 16px;
+    padding: 10px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    margin: 0;
+}
+
 button {
     font-size: 16px;
-    padding: 8px;
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-button {
+    padding: 12px 20px;
+    margin: 0;
     background-color: #2980b9;
     color: white;
     border: none;
-    padding: 12px 20px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
-    width: 100%;
     transition: background 0.3s, transform 0.1s;
 }
 
-.section {
-    margin: 20px 0;
+.toolbar button {
+    flex: 0 0 auto;
 }
 
-.item {
-    border-left: 3px solid #ccc;
-    padding: 8px 12px;
-    margin: 12px 0;
+/* Khung camera và nút dừng: ẩn mặc định, JS sẽ hiện khi bấm Quét QR */
+#reader,
+#btnDung {
+    display: none;
+}
+
+#reader {
+    width: 100%;
+    max-width: 360px;
+    margin: 12px auto;
+}
+
+#btnDung {
+    margin-top: 10px;
+}
+
+/* Kết quả tra cứu */
+#ketqua {
+    margin-top: 20px;
+}
+
+#ketqua h3 {
+    margin: 0 0 8px;
+    font-size: 22px;
+}
+
+/* Banner tổng kết: đổi màu theo class ok / bad */
+#ketqua > p.ok,
+#ketqua > p.bad {
+    padding: 10px 14px;
+    border-left: 4px solid currentColor;
+    border-radius: 4px;
+    font-weight: 600;
 }
 
 .ok {
@@ -46,9 +93,116 @@ button {
 }
 
 .bad {
-    color: red;
+    color: #2980b9;
 }
 
-#walletAddress {
-    margin: 10px 0;
+/* Timeline */
+.timeline {
+    list-style: none;
+    margin: 20px 0;
+    padding: 0 0 0 30px;
+    border-left: 3px solid #e0e0e0;
+}
+
+.tl-item {
+    position: relative;
+    margin: 0 0 16px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #e3e3e3;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    overflow-wrap: anywhere;
+}
+
+/* Chấm mốc nằm trên đường kẻ dọc */
+.tl-item::before {
+    content: "";
+    position: absolute;
+    left: -40px;
+    top: 16px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #2980b9;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px #2980b9;
+}
+
+/* Ngày giờ */
+.tl-item > b {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 2px;
+}
+
+/* Dòng nhãn xác minh */
+.tl-item > small {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 10px;
+    font-size: 13px;
+    border: 1px solid currentColor;
+    border-radius: 12px;
+}
+
+.tl-item.tl-ok > small {
+    color: green;
+}
+
+.tl-item.tl-bad {
+    border-color: #8fc5e8;
+}
+
+.tl-item.tl-bad::before {
+    background: #2980b9;
+    box-shadow: 0 0 0 2px #2980b9;
+}
+
+.tl-item.tl-bad > small {
+    color: #2980b9;
+}
+
+/* Link Etherscan */
+#ketqua > p:last-child {
+    font-size: 14px;
+}
+
+#ketqua > p:last-child a {
+    color: #2980b9;
+    font-weight: 600;
+    text-decoration: underline;
+    overflow-wrap: anywhere;
+}
+
+#ketqua > p:last-child a:hover {
+    color: #1f618d;
+}
+
+/* Điện thoại */
+@media (max-width: 600px) {
+    body {
+        margin: 20px auto;
+        padding: 0 16px;
+    }
+
+    .toolbar input,
+    .toolbar button {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    .timeline {
+        padding-left: 22px;
+    }
+
+    .tl-item::before {
+        left: -31px;
+        top: 14px;
+    }
+
+    .tl-item {
+        padding: 10px 12px;
+    }
 }
