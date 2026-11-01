@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản trị Chuỗi cung ứng</title>
+    <!-- Nhúng thư viện Ethers.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <h1>Bảng điều khiển Nông dân & Vận chuyển</h1>
+    <button id="btnConnect" onclick="connectWallet()">Kết nối Ví MetaMask</button>
+    <p id="walletAddress">Chưa kết nối ví</p>
+    <hr>
+
+    <!-- Form Khởi tạo lô hàng -->
+    <h3>1. Khởi tạo lô hàng (Dành cho Nông dân)</h3>
+    <input type="text" id="productName" placeholder="Nhập tên nông sản (VD: Xoài)">
+    <!-- BỔ SUNG: Ô nhập mô tả để đẩy vào bảng products trong Database -->
+    <input type="text" id="description" placeholder="Mô tả chi tiết (VD: Xoài cát loại 1)">
+    <button onclick="handleCreateProduct()">Tạo lô hàng</button>
+
+    <!-- Form Cập nhật trạng thái -->
+    <h3>2. Cập nhật trạng thái (Dành cho Vận chuyển)</h3>
+    <input type="number" id="productId" placeholder="ID Lô hàng">
+    <!-- CẢI TIẾN: Chuyển vị trí thành Dropdown để tránh lỗi đánh máy -->
+    <select id="location">
+        <option value="" disabled selected>-- Chọn vị trí hiện tại --</option>
+        <option value="Nông trại Đồng Tháp">Nông trại Đồng Tháp</option>
+        <option value="Trạm trung chuyển Cần Thơ">Trạm trung chuyển Cần Thơ</option>
+        <option value="Kho lạnh TP.HCM">Kho lạnh TP.HCM</option>
+        <option value="Siêu thị phân phối">Siêu thị phân phối</option>
+    </select>
+    <select id="status">
+        <option value="Đã thu hoạch">Đã thu hoạch</option>
+        <option value="Đang vận chuyển">Đang vận chuyển</option>
+        <option value="Đã nhập kho">Đã nhập kho</option>
+    </select>
+    <button onclick="handleUpdateStatus()">Cập nhật</button>
+
+    <!-- Lớp phủ Loading (Mặc định ẩn) -->
+    <div id="loadingOverlay" class="hidden">
+        <div class="spinner"></div>
+        <p>Đang chờ thợ đào xác nhận giao dịch...<br>Vui lòng không đóng trình duyệt!</p>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
