@@ -1,24 +1,5 @@
 [
 	{
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "_initialHash",
-				"type": "bytes32"
-			}
-		],
-		"name": "createProduct",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -83,18 +64,19 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "_id",
-				"type": "uint256"
-			},
-			{
 				"internalType": "bytes32",
-				"name": "_newHash",
+				"name": "_initialHash",
 				"type": "bytes32"
 			}
 		],
-		"name": "updateStatus",
-		"outputs": [],
+		"name": "createProduct",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -208,6 +190,24 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_newHash",
+				"type": "bytes32"
+			}
+		],
+		"name": "updateStatus",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
