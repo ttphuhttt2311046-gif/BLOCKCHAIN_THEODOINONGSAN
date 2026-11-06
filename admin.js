@@ -1,98 +1,31 @@
-// Đợi Người 1 gửi qua thì dán vào đây
-const contractAddress = "0xf80B1598a2bB76149d47543d4193e1ef637f53ca"; 
-const contractABI = [
-    {
-        "anonymous": false,
-        "inputs": [
-            { "indexed": true, "internalType": "uint256", "name": "id", "type": "uint256" },
-            { "indexed": false, "internalType": "bytes32", "name": "dataHash", "type": "bytes32" },
-            { "indexed": true, "internalType": "address", "name": "producer", "type": "address" },
-            { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }
-        ],
-        "name": "ProductCreated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            { "indexed": true, "internalType": "uint256", "name": "id", "type": "uint256" },
-            { "indexed": false, "internalType": "bytes32", "name": "dataHash", "type": "bytes32" },
-            { "indexed": true, "internalType": "address", "name": "updatedBy", "type": "address" },
-            { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }
-        ],
-        "name": "StatusUpdated",
-        "type": "event"
-    },
-    {
-        "inputs": [{ "internalType": "bytes32", "name": "_initialHash", "type": "bytes32" }],
-        "name": "createProduct",
-        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [{ "internalType": "uint256", "name": "_id", "type": "uint256" }],
-        "name": "getProductHistory",
-        "outputs": [
-            {
-                "components": [
-                    { "internalType": "bytes32", "name": "dataHash", "type": "bytes32" },
-                    { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-                    { "internalType": "address", "name": "updatedBy", "type": "address" }
-                ],
-                "internalType": "struct SupplyChain.StatusUpdate[]",
-                "name": "",
-                "type": "tuple[]"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "productCount",
-        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            { "internalType": "uint256", "name": "", "type": "uint256" },
-            { "internalType": "uint256", "name": "", "type": "uint256" }
-        ],
-        "name": "productHistory",
-        "outputs": [
-            { "internalType": "bytes32", "name": "dataHash", "type": "bytes32" },
-            { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-            { "internalType": "address", "name": "updatedBy", "type": "address" }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-        "name": "products",
-        "outputs": [
-            { "internalType": "uint256", "name": "id", "type": "uint256" },
-            { "internalType": "address", "name": "producer", "type": "address" },
-            { "internalType": "uint256", "name": "historyCount", "type": "uint256" }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            { "internalType": "uint256", "name": "_id", "type": "uint256" },
-            { "internalType": "bytes32", "name": "_newHash", "type": "bytes32" }
-        ],
-        "name": "updateStatus",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    }
-]; 
-
 let provider, signer, contract;
+
+// ==========================================
+// 0. HÀM ĐỊNH VỊ GPS TỰ ĐỘNG (THÊM MỚI)
+// ==========================================
+function getLocation() {
+    const geoStatus = document.getElementById("geoStatus");
+    if (!geoStatus) return; // Nếu nút được bấm từ Khu vực 1 không có id="geoStatus" thì bỏ qua hiển thị
+
+    if (navigator.geolocation) {
+        geoStatus.innerText = "Đang tìm vị trí GPS...";
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                if (document.getElementById("lat")) document.getElementById("lat").value = lat;
+                if (document.getElementById("lng")) document.getElementById("lng").value = lng;
+                geoStatus.innerText = `📍 Đã lấy tọa độ: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            },
+            (error) => {
+                geoStatus.innerText = "❌ Lỗi: Vui lòng bật định vị và cấp quyền cho trình duyệt.";
+                console.error("Lỗi GPS:", error);
+            }
+        );
+    } else {
+        geoStatus.innerText = "❌ Trình duyệt của bạn không hỗ trợ định vị GPS.";
+    }
+}
 
 // ==========================================
 // 1. KẾT NỐI VÍ METAMASK VÀ ÉP MẠNG SEPOLIA
@@ -120,8 +53,14 @@ async function connectWallet() {
         const address = await signer.getAddress();
         document.getElementById("walletAddress").innerText = "Ví kết nối: " + address;
 
-        if (contractAddress !== "" && contractABI.length > 0) {
-            contract = new ethers.Contract(contractAddress, contractABI, signer);
+        // Bổ sung thêm hàm kiểm tra phân quyền (nếu bạn có dùng whitelist)
+        if (typeof checkAuthorization === "function") {
+            await checkAuthorization(address);
+        }
+
+        // Khởi tạo Smart Contract bằng biến ENV từ file env.js
+        if (ENV.CONTRACT_ADDRESS !== "" && ENV.CONTRACT_ABI.length > 0) {
+            contract = new ethers.Contract(ENV.CONTRACT_ADDRESS, ENV.CONTRACT_ABI, signer);
         }
     } else {
         alert("Vui lòng cài đặt MetaMask!");
@@ -152,6 +91,10 @@ async function handleCreateProduct() {
 
     const productName = document.getElementById("productName")?.value.trim();
     const description = document.getElementById("description")?.value.trim() || "";
+    
+    // Lấy thêm tọa độ (nếu có bấm nút lấy định vị)
+    const lat = document.getElementById("lat")?.value;
+    const lng = document.getElementById("lng")?.value;
 
     if (!productName) {
         alert("Vui lòng nhập tên sản phẩm!");
@@ -173,7 +116,9 @@ async function handleCreateProduct() {
                 action: "create", 
                 name: productName,
                 description: description,
-                chain_id: nextChainId
+                chain_id: nextChainId,
+                lat: lat ? parseFloat(lat) : null,
+                lng: lng ? parseFloat(lng) : null
             })
         });
         const dbResult = await apiResponse.json();
@@ -194,6 +139,9 @@ async function handleCreateProduct() {
         // Reset form
         document.getElementById("productName").value = "";
         if (document.getElementById("description")) document.getElementById("description").value = "";
+        if (document.getElementById("lat")) document.getElementById("lat").value = "";
+        if (document.getElementById("lng")) document.getElementById("lng").value = "";
+        if (document.getElementById("geoStatus")) document.getElementById("geoStatus").innerText = "";
 
     } catch (error) {
         console.error("Lỗi khởi tạo:", error);
@@ -204,7 +152,7 @@ async function handleCreateProduct() {
 }
 
 // ==========================================
-// 4. XỬ LÝ NÚT: CẬP NHẬT HÀNH TRÌNH (ĐÃ SỬA LỖI CHAIN_ID)
+// 4. XỬ LÝ NÚT: CẬP NHẬT HÀNH TRÌNH
 // ==========================================
 async function handleUpdateStatus() {
     if (!contract) {
@@ -215,9 +163,13 @@ async function handleUpdateStatus() {
     const productId = document.getElementById("productId")?.value.trim();
     const location = document.getElementById("location")?.value.trim();
     const status = document.getElementById("status")?.value || "Đang vận chuyển";
+    
+    // Lấy tọa độ GPS
+    const lat = document.getElementById("lat")?.value;
+    const lng = document.getElementById("lng")?.value;
 
     if (!productId || !location) {
-        alert("Vui lòng nhập mã ID lô hàng và địa điểm!");
+        alert("Vui lòng nhập mã ID lô hàng và chọn địa điểm!");
         return;
     }
 
@@ -232,7 +184,9 @@ async function handleUpdateStatus() {
                 action: "update", 
                 id: productId, 
                 location: location, 
-                status: status 
+                status: status,
+                lat: lat ? parseFloat(lat) : null,
+                lng: lng ? parseFloat(lng) : null
             })
         });
         const dbResult = await apiResponse.json();
@@ -255,7 +209,10 @@ async function handleUpdateStatus() {
         
         // Reset form
         document.getElementById("productId").value = "";
-        document.getElementById("location").value = "";
+        document.getElementById("location").value = ""; 
+        if (document.getElementById("lat")) document.getElementById("lat").value = "";
+        if (document.getElementById("lng")) document.getElementById("lng").value = "";
+        if (document.getElementById("geoStatus")) document.getElementById("geoStatus").innerText = "";
 
     } catch (error) {
         console.error("Lỗi cập nhật:", error);

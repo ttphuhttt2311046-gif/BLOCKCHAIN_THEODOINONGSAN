@@ -12,32 +12,53 @@
     <h1>Bảng điều khiển Nông dân & Vận chuyển</h1>
     <button id="btnConnect" onclick="connectWallet()">Kết nối Ví MetaMask</button>
     <p id="walletAddress">Chưa kết nối ví</p>
+    
+    <!-- Cảnh báo lỗi phân quyền (Sẽ bị ẩn mặc định) -->
+    <div id="unauthorizedMessage" style="display: none; color: red; font-weight: bold; margin-bottom: 10px;">
+        🚫 Ví của bạn không được phân quyền để thao tác trên hệ thống này.
+    </div>
+    
     <hr>
 
-    <!-- Form Khởi tạo lô hàng -->
-    <h3>1. Khởi tạo lô hàng (Dành cho Nông dân)</h3>
-    <input type="text" id="productName" placeholder="Nhập tên nông sản (VD: Xoài)">
-    <!-- BỔ SUNG: Ô nhập mô tả để đẩy vào bảng products trong Database -->
-    <input type="text" id="description" placeholder="Mô tả chi tiết (VD: Xoài cát loại 1)">
-    <button onclick="handleCreateProduct()">Tạo lô hàng</button>
+    <!-- Khu vực 1: Form Khởi tạo lô hàng -->
+    <div id="farmerSection">
+        <h3>1. Khởi tạo lô hàng (Dành cho Nông dân)</h3>
+        <input type="text" id="productName" placeholder="Nhập tên nông sản (VD: Xoài)">
+        <!-- BỔ SUNG: Ô nhập mô tả để đẩy vào bảng products trong Database -->
+        <input type="text" id="description" placeholder="Mô tả chi tiết (VD: Xoài cát loại 1)">
+        
+        <!-- Tuỳ chọn: Có thể thêm nút định vị ở đây nếu muốn trạm đầu tiên cũng có tọa độ -->
+        <button type="button" onclick="getLocation()" style="margin-bottom: 10px; background: #6c757d; color: white;">📍 Lấy định vị tự động</button>
+        
+        <button onclick="handleCreateProduct()">Tạo lô hàng</button>
+    </div>
 
-    <!-- Form Cập nhật trạng thái -->
-    <h3>2. Cập nhật trạng thái (Dành cho Vận chuyển)</h3>
-    <input type="number" id="productId" placeholder="ID Lô hàng">
-    <!-- CẢI TIẾN: Chuyển vị trí thành Dropdown để tránh lỗi đánh máy -->
-    <select id="location">
-        <option value="" disabled selected>-- Chọn vị trí hiện tại --</option>
-        <option value="Nông trại Đồng Tháp">Nông trại Đồng Tháp</option>
-        <option value="Trạm trung chuyển Cần Thơ">Trạm trung chuyển Cần Thơ</option>
-        <option value="Kho lạnh TP.HCM">Kho lạnh TP.HCM</option>
-        <option value="Siêu thị phân phối">Siêu thị phân phối</option>
-    </select>
-    <select id="status">
-        <option value="Đã thu hoạch">Đã thu hoạch</option>
-        <option value="Đang vận chuyển">Đang vận chuyển</option>
-        <option value="Đã nhập kho">Đã nhập kho</option>
-    </select>
-    <button onclick="handleUpdateStatus()">Cập nhật</button>
+    <!-- Khu vực 2: Form Cập nhật trạng thái -->
+    <div id="transporterSection">
+        <h3>2. Cập nhật trạng thái (Dành cho Vận chuyển)</h3>
+        <input type="number" id="productId" placeholder="ID Lô hàng">
+        <!-- CẢI TIẾN: Chuyển vị trí thành Dropdown để tránh lỗi đánh máy -->
+        <select id="location">
+            <option value="" disabled selected>-- Chọn vị trí hiện tại --</option>
+            <option value="Nông trại Đồng Tháp">Nông trại Đồng Tháp</option>
+            <option value="Trạm trung chuyển Cần Thơ">Trạm trung chuyển Cần Thơ</option>
+            <option value="Kho lạnh TP.HCM">Kho lạnh TP.HCM</option>
+            <option value="Siêu thị phân phối">Siêu thị phân phối</option>
+        </select>
+
+        <!-- BỔ SUNG MỚI: Nút lấy vị trí và Input ẩn lưu tọa độ -->
+        <button type="button" onclick="getLocation()" style="margin-bottom: 10px; background: #6c757d; color: white;">📍 Lấy định vị tự động (GPS)</button>
+        <p id="geoStatus" style="font-size: 12px; color: #555; margin-top: -5px; margin-bottom: 10px;"></p>
+        <input type="hidden" id="lat" value="">
+        <input type="hidden" id="lng" value="">
+
+        <select id="status">
+            <option value="Đã thu hoạch">Đã thu hoạch</option>
+            <option value="Đang vận chuyển">Đang vận chuyển</option>
+            <option value="Đã nhập kho">Đã nhập kho</option>
+        </select>
+        <button onclick="handleUpdateStatus()">Cập nhật</button>
+    </div>
 
     <!-- Lớp phủ Loading (Mặc định ẩn) -->
     <div id="loadingOverlay" class="hidden">
@@ -45,6 +66,10 @@
         <p>Đang chờ thợ đào xác nhận giao dịch...<br>Vui lòng không đóng trình duyệt!</p>
     </div>
 
+    <!-- BẮT BUỘC: Gọi file biến môi trường TRƯỚC file logic chính -->
+    <script src="env.js"></script>
+    
+    <!-- File chứa logic xử lý MetaMask và API -->
     <script src="admin.js"></script>
 </body>
 </html>

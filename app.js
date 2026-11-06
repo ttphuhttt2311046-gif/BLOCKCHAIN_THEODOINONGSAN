@@ -1,101 +1,8 @@
 const RPC_URL = "https://ethereum-sepolia-rpc.publicnode.com";
-const CONTRACT_ADDRESS = "0xf80B1598a2bB76149d47543d4193e1ef637f53ca"; 
 const API_URL = "api.php";
 
-// NHÚNG TRỰC TIẾP ABI VÀO APP.JS ĐỂ TRÁNH DÍNH CACHE FILE JSON
-const ABI = [
-    {
-        "anonymous": false,
-        "inputs": [
-            { "indexed": true, "internalType": "uint256", "name": "id", "type": "uint256" },
-            { "indexed": false, "internalType": "bytes32", "name": "dataHash", "type": "bytes32" },
-            { "indexed": true, "internalType": "address", "name": "producer", "type": "address" },
-            { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }
-        ],
-        "name": "ProductCreated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            { "indexed": true, "internalType": "uint256", "name": "id", "type": "uint256" },
-            { "indexed": false, "internalType": "bytes32", "name": "dataHash", "type": "bytes32" },
-            { "indexed": true, "internalType": "address", "name": "updatedBy", "type": "address" },
-            { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }
-        ],
-        "name": "StatusUpdated",
-        "type": "event"
-    },
-    {
-        "inputs": [{ "internalType": "bytes32", "name": "_initialHash", "type": "bytes32" }],
-        "name": "createProduct",
-        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [{ "internalType": "uint256", "name": "_id", "type": "uint256" }],
-        "name": "getProductHistory",
-        "outputs": [
-            {
-                "components": [
-                    { "internalType": "bytes32", "name": "dataHash", "type": "bytes32" },
-                    { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-                    { "internalType": "address", "name": "updatedBy", "type": "address" }
-                ],
-                "internalType": "struct SupplyChain.StatusUpdate[]",
-                "name": "",
-                "type": "tuple[]"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "productCount",
-        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            { "internalType": "uint256", "name": "", "type": "uint256" },
-            { "internalType": "uint256", "name": "", "type": "uint256" }
-        ],
-        "name": "productHistory",
-        "outputs": [
-            { "internalType": "bytes32", "name": "dataHash", "type": "bytes32" },
-            { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-            { "internalType": "address", "name": "updatedBy", "type": "address" }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-        "name": "products",
-        "outputs": [
-            { "internalType": "uint256", "name": "id", "type": "uint256" },
-            { "internalType": "address", "name": "producer", "type": "address" },
-            { "internalType": "uint256", "name": "historyCount", "type": "uint256" }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            { "internalType": "uint256", "name": "_id", "type": "uint256" },
-            { "internalType": "bytes32", "name": "_newHash", "type": "bytes32" }
-        ],
-        "name": "updateStatus",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    }
-];
-
 let scanner = null;
+let trackingMap = null; // Thêm biến toàn cục lưu trạng thái bản đồ
 
 // Chuyển đổi mọi định dạng Hash sang Hex string chuẩn 64 ký tự
 function safeHex(val) {
@@ -135,9 +42,9 @@ async function traCuu(dbId) {
         if (!db.product) throw new Error(db.message || "Không tìm thấy lô hàng trong cơ sở dữ liệu");
         if (db.product.chain_id == null) throw new Error("Lô hàng chưa được ghi lên Blockchain (chain_id rỗng)");
 
-        // 2. Kết nối Smart Contract Sepolia với ABI trực tiếp
+        // 2. Kết nối Smart Contract Sepolia lấy dữ liệu từ ENV (env.js)
         const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
-        const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+        const contract = new ethers.Contract(ENV.CONTRACT_ADDRESS, ENV.CONTRACT_ABI, provider);
         
         const chain = await contract.getProductHistory(db.product.chain_id);
 
@@ -158,6 +65,7 @@ async function traCuu(dbId) {
             const ok = (localHash === dbHash) && (localHash === chainHash);
             allOk = allOk && ok;
 
+            // Đã sửa lỗi nhân timestamp (row.ts * 1000)
             return `<li class="tl-item" style="margin-bottom: 12px; padding: 10px; border-left: 4px solid ${ok ? '#2ec4b6' : '#e71d36'}; background: #f8f9fa;">
                 <b>${esc(new Date(row.ts * 1000).toLocaleString("vi-VN"))}</b><br>
                 📍 Vị trí: ${esc(row.location)} — Trạng thái: ${esc(row.status)}<br>
@@ -170,9 +78,57 @@ async function traCuu(dbId) {
                 ${allOk ? "✓ Toàn bộ hành trình đã được xác minh toàn vẹn" : "❌ Có mốc dữ liệu bị thay đổi so với Blockchain"}
             </p>
             <ol style="list-style: none; padding-left: 0;">${items}</ol>
-            <p><a href="https://sepolia.etherscan.io/address/${CONTRACT_ADDRESS}" target="_blank" rel="noopener">Xem Hợp Đồng trên Sepolia Etherscan ↗</a></p>`;
+            <p><a href="https://sepolia.etherscan.io/address/${ENV.CONTRACT_ADDRESS}" target="_blank" rel="noopener">Xem Hợp Đồng trên Sepolia Etherscan ↗</a></p>`;
+
+        // --- BẮT ĐẦU VẼ BẢN ĐỒ ---
+        const mapDiv = document.getElementById("map");
+        // Lọc ra các điểm có tọa độ hợp lệ
+        const points = db.history.filter(r => r.lat && r.lng).map(r => [parseFloat(r.lat), parseFloat(r.lng)]);
+
+        if (points.length > 0) {
+            mapDiv.style.display = "block";
+            
+            // Xóa bản đồ cũ nếu tra cứu liên tục nhiều mã
+            if (trackingMap !== null) {
+                trackingMap.remove();
+            }
+
+            // Khởi tạo bản đồ, focus vào điểm đầu tiên
+            trackingMap = L.map('map').setView(points[0], 6);
+            
+            // SỬ DỤNG GOOGLE MAPS THAY CHO OPENSTREETMAP
+            L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                attribution: '© Google Maps'
+            }).addTo(trackingMap);
+
+            // Vẽ đường nối các điểm (Polyline)
+            const polyline = L.polyline(points, {color: '#e71d36', weight: 4, opacity: 0.7}).addTo(trackingMap);
+
+            // Thêm Marker cho từng trạm
+            db.history.forEach((row, i) => {
+                if (row.lat && row.lng) {
+                    const marker = L.marker([row.lat, row.lng]).addTo(trackingMap);
+                    marker.bindPopup(`<b>Trạm ${i+1}: ${esc(row.location)}</b><br>${esc(row.status)}`).openPopup();
+                }
+            });
+
+            // Tự động zoom cho vừa vặn tất cả các điểm
+            trackingMap.fitBounds(polyline.getBounds(), { padding: [30, 30] });
+            
+            // TĂNG DELAY LÊN 500ms ĐỂ CHỐNG LỖI XÁM KHUNG
+            setTimeout(() => {
+                trackingMap.invalidateSize();
+            }, 500);
+        } else {
+            if (mapDiv) mapDiv.style.display = "none";
+        }
+        // --- KẾT THÚC VẼ BẢN ĐỒ ---
+
     } catch (e) {
         out.innerHTML = `<span class="bad" style="color: red;">Lỗi: ${esc(e.message)}</span>`;
+        // Ẩn bản đồ nếu có lỗi
+        const mapDiv = document.getElementById("map");
+        if (mapDiv) mapDiv.style.display = "none";
     }
 }
 

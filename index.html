@@ -1,27 +1,44 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tra cứu nguồn gốc</title>
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<link rel="stylesheet" href="trace-ui.css">
-<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.ethers.io https://cdnjs.cloudflare.com;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Chỉ dùng 1 thẻ CSP này để cho phép tải ảnh bản đồ từ mọi nguồn https -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline' https:; style-src * 'unsafe-inline';">    
+    
+    <title>Tra cứu nguồn gốc</title>
+    <!-- Nhúng thư viện Ethers.js và HTML5-QRCode -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    
+    <!-- Nhúng thư viện Leaflet.js để vẽ bản đồ -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="trace-ui.css">
 </head>
 <body>
-  <h2>Tra cứu nguồn gốc sản phẩm</h2>
+    <h2>Tra cứu nguồn gốc sản phẩm</h2>
 
-  <div class="toolbar">
-    <input id="pid" placeholder="Mã lô hàng" inputmode="numeric">
-    <button onclick="traCuu(document.getElementById('pid').value.trim())">Tra cứu</button>
-    <button onclick="batQuet()">Quét QR</button>
-  </div>
+    <div class="toolbar">
+        <input id="pid" placeholder="Mã lô hàng" inputmode="numeric">
+        <button onclick="traCuu(document.getElementById('pid').value.trim())">Tra cứu</button>
+        <button onclick="batQuet()">Quét QR</button>
+    </div>
 
-  <div id="reader"></div>
-  <button id="btnDung" onclick="stopQuet()">Dừng quét</button>
+    <div id="reader"></div>
+    <button id="btnDung" onclick="stopQuet()" style="display: none;">Dừng quét</button>
 
-  <div id="ketqua"></div>
-  <script src="app.js"></script>
+    <div id="ketqua"></div>
+    
+    <!-- Khung chứa bản đồ hiển thị hành trình -->
+    <div id="map" style="height: 350px; width: 100%; margin-top: 20px; border-radius: 8px; display: none; z-index: 1;"></div>
+    
+    <!-- 1. GỌI FILE BIẾN MÔI TRƯỜNG TRƯỚC -->
+    <script src="env.js"></script>
+    
+    <!-- 2. GỌI FILE LOGIC XỬ LÝ -->
+    <script src="app.js"></script>
 </body>
 </html>

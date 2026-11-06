@@ -24,7 +24,6 @@ if ($action === "create") {
     // Lấy chain_id từ admin.js gửi sang (nếu có)
     $chain_id = isset($data->chain_id) ? (int)$data->chain_id : 0;
 
-    // Ép id và chain_id của MySQL trùng khớp với chain_id từ Blockchain
     if ($chain_id > 0) {
         $sql_product = "INSERT INTO products (id, name, description, chain_id, farmer_id) 
                         VALUES ($chain_id, '$name', '$description', $chain_id, $farmer_id)";
@@ -51,9 +50,13 @@ if ($action === "create") {
         $loc_esc = $conn->real_escape_string($location);
         $st_esc = $conn->real_escape_string($status);
         
-        // Lưu dòng đầu tiên vào bảng tracking_history
-        $sql_history = "INSERT INTO tracking_history (product_id, location, status, data_hash, updated_by, updated_at) 
-                        VALUES ($product_id, '$loc_esc', '$st_esc', '$data_hash', $farmer_id, FROM_UNIXTIME($timestamp))";
+        // Nhận tọa độ nếu có truyền lên lúc khởi tạo
+        $lat = isset($data->lat) ? (float)$data->lat : 'NULL';
+        $lng = isset($data->lng) ? (float)$data->lng : 'NULL';
+        
+        // Lưu dòng đầu tiên vào bảng tracking_history (đã thêm lat, lng)
+        $sql_history = "INSERT INTO tracking_history (product_id, location, status, data_hash, updated_by, updated_at, lat, lng) 
+                        VALUES ($product_id, '$loc_esc', '$st_esc', '$data_hash', $farmer_id, FROM_UNIXTIME($timestamp), $lat, $lng)";
         $conn->query($sql_history);
 
         echo json_encode([
@@ -93,9 +96,13 @@ elseif ($action === "update") {
     $raw_string = $product_id . $location . $status . $timestamp;
     $data_hash = "0x" . hash('sha256', $raw_string);
 
-    // Thêm dòng MỚI vào bảng tracking_history
-    $sql_history = "INSERT INTO tracking_history (product_id, location, status, data_hash, updated_by, updated_at) 
-                    VALUES ($product_id, '$location', '$status', '$data_hash', $transporter_id, FROM_UNIXTIME($timestamp))";
+    // Xử lý tọa độ
+    $lat = isset($data->lat) ? (float)$data->lat : 'NULL';
+    $lng = isset($data->lng) ? (float)$data->lng : 'NULL';
+
+    // Thêm dòng MỚI vào bảng tracking_history (đã thêm lat, lng)
+    $sql_history = "INSERT INTO tracking_history (product_id, location, status, data_hash, updated_by, updated_at, lat, lng) 
+                    VALUES ($product_id, '$location', '$status', '$data_hash', $transporter_id, FROM_UNIXTIME($timestamp), $lat, $lng)";
     
     if ($conn->query($sql_history) === TRUE) {
         echo json_encode(["hash" => $data_hash, "chain_id" => $chain_id]);
@@ -127,7 +134,8 @@ elseif ($action === "history") {
         $real_id = (int)$p['id'];
         $chain_id = $p['chain_id'] ? (int)$p['chain_id'] : $real_id;
         
-        $rs = $conn->query("SELECT product_id, location, status, data_hash, UNIX_TIMESTAMP(updated_at) AS ts 
+        // Đã bổ sung lat và lng vào câu SELECT
+        $rs = $conn->query("SELECT product_id, location, status, data_hash, lat, lng, UNIX_TIMESTAMP(updated_at) AS ts 
                             FROM tracking_history 
                             WHERE product_id = $real_id OR product_id = $chain_id 
                             ORDER BY id ASC");
