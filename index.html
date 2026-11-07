@@ -6,21 +6,43 @@
 <title>Tra cứu nguồn gốc</title>
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<link rel="stylesheet" href="trace-ui.css">
+<link rel="stylesheet" href="css/trace-ui.css">
 </head>
 <body>
-  <h2>Tra cứu nguồn gốc sản phẩm</h2>
+  <main class="card">
+    <h1 class="title">Tra cứu nguồn gốc sản phẩm</h1>
 
-  <div class="toolbar">
-    <input id="pid" placeholder="Mã lô hàng" inputmode="numeric">
-    <button onclick="traCuu(document.getElementById('pid').value.trim())">Tra cứu</button>
-    <button onclick="batQuet()">Quét QR</button>
-  </div>
+    <label class="label" for="pid">Mã lô nông sản</label>
+    <div class="search-row">
+      <span class="search-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 6v12M8 6v12M11 6v12M15 6v12M18 6v12M20 6v12"/>
+        </svg>
+      </span>
+      <input id="pid" placeholder="Ví dụ: FC-2026-001" autocomplete="off">
+      <button class="btn-search" type="button" onclick="traCuu(document.getElementById('pid').value.trim())">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>
+        </svg>
+        <span>Tra cứu</span>
+      </button>
+    </div>
 
-  <div id="reader"></div>
-  <button id="btnDung" onclick="stopQuet()">Dừng quét</button>
+    <button class="qr-link" type="button" onclick="batQuet()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v3M14 20h3M20 20h1"/>
+      </svg>
+      Quét mã QR bằng camera
+    </button>
 
-  <div id="ketqua"></div>
+    <div id="reader"></div>
+    <button id="btnDung" type="button" onclick="stopQuet()">Dừng quét</button>
+
+    <div id="ketqua"></div>
+  </main>
+
+  <script src="config.php"></script>
   <script src="app.js"></script>
 </body>
 </html>

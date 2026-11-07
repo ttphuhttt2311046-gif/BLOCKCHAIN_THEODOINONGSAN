@@ -1,0 +1,10 @@
+# Bí mật: mật khẩu DB, cấu hình local
+.env
+.env.*
+!.env.example
+
+# Editor và hệ điều hành
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

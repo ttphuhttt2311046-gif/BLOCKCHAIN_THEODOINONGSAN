@@ -3,28 +3,17 @@
 		"inputs": [
 			{
 				"internalType": "string",
-				"name": "_name",
+				"name": "batchId",
 				"type": "string"
 			},
 			{
-				"internalType": "string",
-				"name": "_location",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_hash",
-				"type": "string"
+				"internalType": "bytes32",
+				"name": "initialHash",
+				"type": "bytes32"
 			}
 		],
 		"name": "createProduct",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -33,14 +22,8 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
 				"internalType": "string",
-				"name": "name",
+				"name": "batchId",
 				"type": "string"
 			},
 			{
@@ -51,9 +34,9 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "string",
-				"name": "location",
-				"type": "string"
+				"internalType": "bytes32",
+				"name": "initialHash",
+				"type": "bytes32"
 			},
 			{
 				"indexed": false,
@@ -70,27 +53,27 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "enum SupplyChain.State",
-				"name": "state",
-				"type": "uint8"
-			},
-			{
-				"indexed": false,
 				"internalType": "string",
-				"name": "location",
+				"name": "batchId",
 				"type": "string"
 			},
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "updatedBy",
+				"name": "updater",
 				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "dataHash",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "status",
+				"type": "string"
 			},
 			{
 				"indexed": false,
@@ -105,23 +88,18 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "_id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "enum SupplyChain.State",
-				"name": "_newState",
-				"type": "uint8"
-			},
-			{
 				"internalType": "string",
-				"name": "_location",
+				"name": "batchId",
 				"type": "string"
 			},
 			{
+				"internalType": "bytes32",
+				"name": "newHash",
+				"type": "bytes32"
+			},
+			{
 				"internalType": "string",
-				"name": "_hash",
+				"name": "status",
 				"type": "string"
 			}
 		],
@@ -133,9 +111,67 @@
 	{
 		"inputs": [
 			{
+				"internalType": "string",
+				"name": "batchId",
+				"type": "string"
+			}
+		],
+		"name": "getProducer",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "batchId",
+				"type": "string"
+			}
+		],
+		"name": "getProduct",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "producer",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "initialHash",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "latestHash",
+				"type": "bytes32"
+			},
+			{
 				"internalType": "uint256",
-				"name": "_id",
+				"name": "createdAt",
 				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "exists",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "batchId",
+				"type": "string"
 			}
 		],
 		"name": "getProductHistory",
@@ -143,13 +179,13 @@
 			{
 				"components": [
 					{
-						"internalType": "enum SupplyChain.State",
-						"name": "state",
-						"type": "uint8"
+						"internalType": "bytes32",
+						"name": "dataHash",
+						"type": "bytes32"
 					},
 					{
 						"internalType": "string",
-						"name": "location",
+						"name": "status",
 						"type": "string"
 					},
 					{
@@ -159,16 +195,11 @@
 					},
 					{
 						"internalType": "address",
-						"name": "updatedBy",
+						"name": "updater",
 						"type": "address"
-					},
-					{
-						"internalType": "string",
-						"name": "dataHash",
-						"type": "string"
 					}
 				],
-				"internalType": "struct SupplyChain.StatusUpdate[]",
+				"internalType": "struct SupplyChain.HistoryItem[]",
 				"name": "",
 				"type": "tuple[]"
 			}
@@ -177,96 +208,24 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "productCount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
+				"internalType": "string",
+				"name": "batchId",
+				"type": "string"
 			},
 			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
+				"internalType": "bytes32",
+				"name": "candidateHash",
+				"type": "bytes32"
 			}
 		],
-		"name": "productHistory",
+		"name": "verifyHash",
 		"outputs": [
 			{
-				"internalType": "enum SupplyChain.State",
-				"name": "state",
-				"type": "uint8"
-			},
-			{
-				"internalType": "string",
-				"name": "location",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "timestamp",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "updatedBy",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "dataHash",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
+				"internalType": "bool",
 				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "products",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "name",
-				"type": "string"
-			},
-			{
-				"internalType": "address",
-				"name": "producer",
-				"type": "address"
-			},
-			{
-				"internalType": "enum SupplyChain.State",
-				"name": "currentState",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint256",
-				"name": "historyCount",
-				"type": "uint256"
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",

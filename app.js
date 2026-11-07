@@ -1,5 +1,5 @@
-const RPC_URL = "https://ethereum-sepolia-rpc.publicnode.com";
-const CONTRACT_ADDRESS = "0xF33310DF8c1cdCc625160192724314Bb075a71DB"; // địa chỉ sau khi người 1 deploy lại
+const RPC_URL = window.APP_CONFIG.RPC_URL;
+const CONTRACT_ADDRESS = window.APP_CONFIG.CONTRACT_ADDRESS;
 const API_URL = "api.php";
 let abi = null;
 let scanner = null;
@@ -37,7 +37,7 @@ async function traCuu(dbId) {
     if (!abi) abi = await (await fetch("SupplyChainABI.json")).json();
     const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
     const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
-    const chain = await contract.getProductHistory(db.product.chain_id);
+    const chain = await contract.getProductHistory(String(db.product.chain_id));
 
     if (chain.length !== db.history.length) {
       throw new Error(`Số mốc không khớp: DB ${db.history.length}, chain ${chain.length}`);
@@ -49,8 +49,7 @@ async function traCuu(dbId) {
       const c = chain[i];
       const computed = computeHash(row);
       const ok = computed === row.data_hash.toLowerCase()
-              && computed === String(c.dataHash).toLowerCase()
-              && c.location === row.location;
+        && computed === String(c.dataHash).toLowerCase();
       allOk = allOk && ok;
       return `<li class="tl-item ${ok ? "tl-ok" : "tl-bad"}">
         <b>${esc(new Date(row.ts * 1000).toLocaleString("vi-VN"))}</b><br>
