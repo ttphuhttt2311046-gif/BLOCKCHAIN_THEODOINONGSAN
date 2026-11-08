@@ -3,12 +3,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 
-$conn = new mysqli("localhost", "root", "", "traceability_db");
-if ($conn->connect_error) {
-    die(json_encode(["message" => "Lỗi kết nối CSDL"]));
-}
-
-$conn->set_charset("utf8mb4");
+require 'db.php'; 
 
 $data = json_decode(file_get_contents("php://input"));
 $action = isset($data->action) ? $data->action : "";

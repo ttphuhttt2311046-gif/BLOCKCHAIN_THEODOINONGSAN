@@ -5,8 +5,14 @@
     <title>Quản trị Chuỗi cung ứng</title>
     <!-- Nhúng thư viện Ethers.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    
+    <!-- BỔ SUNG: Nhúng thư viện tạo mã QR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
     <link rel="stylesheet" href="admin.css">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.ethers.io https://cdnjs.cloudflare.com;">
+    
+    <!-- BỔ SUNG: Thêm "img-src 'self' data:;" để cho phép hiển thị ảnh QR -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.ethers.io https://cdnjs.cloudflare.com; img-src 'self' data:;">
 </head>
 <body>
     <h1>Bảng điều khiển Nông dân & Vận chuyển</h1>
@@ -24,20 +30,26 @@
     <div id="farmerSection">
         <h3>1. Khởi tạo lô hàng (Dành cho Nông dân)</h3>
         <input type="text" id="productName" placeholder="Nhập tên nông sản (VD: Xoài)">
-        <!-- BỔ SUNG: Ô nhập mô tả để đẩy vào bảng products trong Database -->
         <input type="text" id="description" placeholder="Mô tả chi tiết (VD: Xoài cát loại 1)">
         
-        <!-- Tuỳ chọn: Có thể thêm nút định vị ở đây nếu muốn trạm đầu tiên cũng có tọa độ -->
         <button type="button" onclick="getLocation()" style="margin-bottom: 10px; background: #6c757d; color: white;">📍 Lấy định vị tự động</button>
         
         <button onclick="handleCreateProduct()">Tạo lô hàng</button>
+
+        <!-- BỔ SUNG: Khu vực hiển thị mã QR (Mặc định ẩn, chỉ hiện khi tạo thành công) -->
+        <div id="qrContainer" style="display: none; margin-top: 20px; padding: 15px; border: 2px dashed #28a745; text-align: center; border-radius: 8px; background: #f8fff9;">
+            <h4 style="color: #28a745; margin-top: 0;">✅ Tạo lô hàng thành công!</h4>
+            <!-- Nơi vẽ mã QR -->
+            <div id="qrResult" style="display: flex; justify-content: center; margin-bottom: 15px;"></div>
+            <p style="font-size: 14px; color: #555;">Link tra cứu trực tiếp:</p>
+            <a id="qrLink" href="#" target="_blank" style="word-break: break-all; color: #007bff; font-weight: bold;"></a>
+        </div>
     </div>
 
     <!-- Khu vực 2: Form Cập nhật trạng thái -->
     <div id="transporterSection">
         <h3>2. Cập nhật trạng thái (Dành cho Vận chuyển)</h3>
         <input type="number" id="productId" placeholder="ID Lô hàng">
-        <!-- CẢI TIẾN: Chuyển vị trí thành Dropdown để tránh lỗi đánh máy -->
         <select id="location">
             <option value="" disabled selected>-- Chọn vị trí hiện tại --</option>
             <option value="Nông trại Đồng Tháp">Nông trại Đồng Tháp</option>
@@ -46,7 +58,6 @@
             <option value="Siêu thị phân phối">Siêu thị phân phối</option>
         </select>
 
-        <!-- BỔ SUNG MỚI: Nút lấy vị trí và Input ẩn lưu tọa độ -->
         <button type="button" onclick="getLocation()" style="margin-bottom: 10px; background: #6c757d; color: white;">📍 Lấy định vị tự động (GPS)</button>
         <p id="geoStatus" style="font-size: 12px; color: #555; margin-top: -5px; margin-bottom: 10px;"></p>
         <input type="hidden" id="lat" value="">
