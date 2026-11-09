@@ -12,7 +12,7 @@ Hướng dẫn sử dụng:
    WHERE wallet_address = 'ĐỊA_CHỈ_VÍ_META_MASK_BẠN_MUỐN_LÀM_ADMIN';
    ```
 7. Xong thì vào trang quản lí tài khoản chọn địa chỉ ví thứ 2 (nông dân) bấm kết nối ví nó sẽ ghi chờ duyệt đổi lại tài khoản admin duyệt là Nông dân
-8. Ở tài khoản role nông dân hãy tạo lô hàng bấm tạo lô hàng thì bấm confirm chờ giao dịch thành công có thể quét qr hoặc bấm vào link để tra cứu![1794228514537](image/README/1794228514537.png)![1794228410873](image/README/1794228410873.png)![1794228520467](image/README/1794228520467.png)
+8. Ở tài khoản role nông dân hãy tạo lô hàng bấm tạo lô hàng thì bấm confirm chờ giao dịch thành công có thể quét qr hoặc bấm vào link để tra cứu![1794229781937](image/README/1794229781937.png)![1794228410873](image/README/1794228410873.png)![1794228520467](image/README/1794228520467.png)
 9. Trang tra cứu có thể xem được timeline của sản phẩm bấm vào xem hợp đồng trên Etherscan để xác nhận![1794228588306](image/README/1794228588306.png)![1794228658966](image/README/1794228658966.png)
 10. Để cập nhật timeline tiếp theo chọn lại tài khoản admin sửa quyền tài khoản nông dân thành vận chuyển sau đó vào lại tài khoản nông dân đã sửa thành vận chuyển đó để cập nhật ghi mã lô hàng muốn cập nhật chọn vị trí trạng thái bấm cập nhật rồi kí chữ kí![1794228839381](image/README/1794228839381.png)
 11. Quay lại trang tra cứu để kiểm tra ![1794228959551](image/README/1794228959551.png)
