@@ -1,0 +1,187 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    padding: 32px 20px;
+    color: #263b30;
+    background: #f2f6f3;
+    font-family: "Segoe UI", Arial, sans-serif;
+    line-height: 1.5;
+}
+
+.container {
+    width: min(960px, 100%);
+    margin: 0 auto;
+    padding: clamp(20px, 5vw, 40px);
+    border: 1px solid #e0e9e3;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 14px 40px rgb(22 60 38 / 8%);
+}
+
+.page-home {
+    margin: 0 0 18px;
+}
+
+.page-home a {
+    color: #17734f;
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.page-home a:hover {
+    color: #115a3d;
+    text-decoration: underline;
+}
+
+h1 {
+    margin: 0;
+    color: #145a3c;
+    font-size: clamp(24px, 4vw, 32px);
+}
+
+.page-description {
+    margin: 8px 0 24px;
+    color: #63736a;
+}
+
+#statusMsg {
+    margin: 18px 0;
+    padding: 12px 14px;
+    border-radius: 9px;
+    color: #52635a;
+    background: #edf6f0;
+}
+
+.error {
+    color: #a12626;
+    font-weight: 650;
+}
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+
+#usersTable {
+    display: none;
+    width: 100%;
+    margin-top: 18px;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#usersTable th,
+#usersTable td {
+    padding: 13px 15px;
+    border-right: 1px solid #e0e9e3;
+    border-bottom: 1px solid #e0e9e3;
+    text-align: left;
+    vertical-align: middle;
+}
+
+#usersTable th {
+    border-top: 1px solid #17734f;
+    color: #fff;
+    background: #17734f;
+    font-size: 14px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+#usersTable th:first-child,
+#usersTable td:first-child {
+    border-left: 1px solid #e0e9e3;
+}
+
+#usersTable th:first-child {
+    border-left-color: #17734f;
+    border-top-left-radius: 9px;
+}
+
+#usersTable th:last-child {
+    border-right-color: #17734f;
+    border-top-right-radius: 9px;
+}
+
+#usersTable td:first-child {
+    min-width: 230px;
+    overflow-wrap: anywhere;
+}
+
+#usersTable tbody tr:nth-child(even) {
+    background: #f8fbf8;
+}
+
+#usersTable tbody tr:hover {
+    background: #edf6f0;
+}
+
+#usersTable tbody tr.pending {
+    background: #f3faf5;
+    color: #145a3c;
+    font-weight: 600;
+}
+
+#usersTable select {
+    width: 100%;
+    min-width: 170px;
+    min-height: 40px;
+    padding: 7px 10px;
+    border: 1px solid #cbd9cf;
+    border-radius: 8px;
+    color: #263b30;
+    background: #fff;
+    font: inherit;
+}
+
+#usersTable select:focus {
+    border-color: #31835b;
+    outline: 3px solid rgb(49 131 91 / 15%);
+}
+
+#usersTable button {
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 1px solid #17734f;
+    border-radius: 8px;
+    color: #fff;
+    background: #17734f;
+    font: inherit;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+#usersTable button:hover {
+    border-color: #115a3d;
+    background: #115a3d;
+}
+
+a:focus-visible,
+button:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgb(49 131 91 / 30%);
+    outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 16px 12px;
+    }
+
+    .container {
+        padding: 20px 16px;
+        border-radius: 14px;
+    }
+
+    #usersTable th,
+    #usersTable td {
+        padding: 10px;
+    }
+}

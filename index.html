@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FARMCHAIN</title>
+  <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#products" aria-label="FARMCHAIN - trang chủ">
+      <span class="brand-mark" aria-hidden="true">F</span>
+      <span>FARMCHAIN</span>
+    </a>
+
+    <nav class="main-nav" aria-label="Chức năng chính">
+      <button type="button" data-page="lookup">Tra cứu</button>
+      <button type="button" data-page="products" aria-current="page">Quản lý lô hàng</button>
+      <button type="button" data-page="accounts">Quản lý tài khoản</button>
+    </nav>
+  </header>
+
+  <main class="workspace">
+    <iframe
+      id="feature-frame"
+      title="Quản lý lô hàng"
+      src="develop/admin.html"
+      loading="eager"
+    ></iframe>
+  </main>
+
+  <script>
+    const pages = {
+      lookup: { src: "trace-ui/index.html", title: "Tra cứu nguồn gốc" },
+      products: { src: "develop/admin.html", title: "Quản lý lô hàng" },
+      accounts: { src: "develop/manage.html", title: "Quản lý tài khoản" },
+    };
+    const frame = document.getElementById("feature-frame");
+    const navButtons = document.querySelectorAll(".main-nav button");
+
+    function showPage(pageName, updateHash) {
+      const page = pages[pageName] ? pageName : "products";
+      frame.title = pages[page].title;
+      if (frame.getAttribute("src") !== pages[page].src) {
+        frame.setAttribute("src", pages[page].src);
+      }
+
+      navButtons.forEach(button => {
+        if (button.dataset.page === page) {
+          button.setAttribute("aria-current", "page");
+        } else {
+          button.removeAttribute("aria-current");
+        }
+      });
+
+      if (updateHash && location.hash !== `#${page}`) {
+        history.replaceState(null, "", `#${page}`);
+      }
+    }
+
+    navButtons.forEach(button => {
+      button.addEventListener("click", () => showPage(button.dataset.page, true));
+    });
+
+    document.querySelector(".brand").addEventListener("click", event => {
+      event.preventDefault();
+      showPage("products", true);
+    });
+
+    window.addEventListener("hashchange", () => {
+      showPage(location.hash.slice(1) || "products", false);
+    });
+
+    showPage(location.hash.slice(1), false);
+  </script>
+</body>
+</html>

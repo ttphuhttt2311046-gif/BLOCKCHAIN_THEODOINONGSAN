@@ -1,0 +1,129 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #23352c;
+  background: #f2f6f3;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.site-header {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  display: flex;
+  min-height: 76px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 clamp(20px, 5vw, 72px);
+  border-bottom: 1px solid #e0e9e3;
+  background: rgb(255 255 255 / 96%);
+  box-shadow: 0 4px 18px rgb(22 60 38 / 6%);
+}
+
+.brand {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+  color: #145a3c;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 11px;
+  color: #fff;
+  background: #17734f;
+  font-size: 20px;
+  letter-spacing: 0;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.main-nav button {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 10px;
+  color: #52635a;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.main-nav button:hover,
+.main-nav button:focus-visible {
+  color: #145a3c;
+  background: #edf6f0;
+  outline: none;
+}
+
+.main-nav button[aria-current="page"] {
+  color: #fff;
+  background: #17734f;
+}
+
+.workspace {
+  min-height: calc(100vh - 76px);
+}
+
+#feature-frame {
+  display: block;
+  width: 100%;
+  min-height: calc(100vh - 76px);
+  border: 0;
+  background: #f2f6f3;
+}
+
+@media (max-width: 680px) {
+  .site-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px 0;
+  }
+
+  .main-nav {
+    width: 100%;
+    gap: 4px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+
+  .main-nav button {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+
+  .workspace,
+  #feature-frame {
+    min-height: calc(100vh - 126px);
+  }
+}
