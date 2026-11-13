@@ -2,18 +2,19 @@
 	{
 		"inputs": [
 			{
-				"internalType": "string",
-				"name": "batchId",
-				"type": "string"
-			},
-			{
 				"internalType": "bytes32",
-				"name": "initialHash",
+				"name": "_initialHash",
 				"type": "bytes32"
 			}
 		],
 		"name": "createProduct",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -22,21 +23,21 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"internalType": "string",
-				"name": "batchId",
-				"type": "string"
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "dataHash",
+				"type": "bytes32"
 			},
 			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "producer",
 				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "bytes32",
-				"name": "initialHash",
-				"type": "bytes32"
 			},
 			{
 				"indexed": false,
@@ -53,15 +54,9 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"internalType": "string",
-				"name": "batchId",
-				"type": "string"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "updater",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
 			},
 			{
 				"indexed": false,
@@ -70,10 +65,10 @@
 				"type": "bytes32"
 			},
 			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "status",
-				"type": "string"
+				"indexed": true,
+				"internalType": "address",
+				"name": "updatedBy",
+				"type": "address"
 			},
 			{
 				"indexed": false,
@@ -88,19 +83,14 @@
 	{
 		"inputs": [
 			{
-				"internalType": "string",
-				"name": "batchId",
-				"type": "string"
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
 			},
 			{
 				"internalType": "bytes32",
-				"name": "newHash",
+				"name": "_newHash",
 				"type": "bytes32"
-			},
-			{
-				"internalType": "string",
-				"name": "status",
-				"type": "string"
 			}
 		],
 		"name": "updateStatus",
@@ -111,67 +101,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "string",
-				"name": "batchId",
-				"type": "string"
-			}
-		],
-		"name": "getProducer",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "batchId",
-				"type": "string"
-			}
-		],
-		"name": "getProduct",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "producer",
-				"type": "address"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "initialHash",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "latestHash",
-				"type": "bytes32"
-			},
-			{
 				"internalType": "uint256",
-				"name": "createdAt",
+				"name": "_id",
 				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "exists",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "batchId",
-				"type": "string"
 			}
 		],
 		"name": "getProductHistory",
@@ -184,22 +116,17 @@
 						"type": "bytes32"
 					},
 					{
-						"internalType": "string",
-						"name": "status",
-						"type": "string"
-					},
-					{
 						"internalType": "uint256",
 						"name": "timestamp",
 						"type": "uint256"
 					},
 					{
 						"internalType": "address",
-						"name": "updater",
+						"name": "updatedBy",
 						"type": "address"
 					}
 				],
-				"internalType": "struct SupplyChain.HistoryItem[]",
+				"internalType": "struct SupplyChain.StatusUpdate[]",
 				"name": "",
 				"type": "tuple[]"
 			}
@@ -208,24 +135,76 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "batchId",
-				"type": "string"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "candidateHash",
-				"type": "bytes32"
-			}
-		],
-		"name": "verifyHash",
+		"inputs": [],
+		"name": "productCount",
 		"outputs": [
 			{
-				"internalType": "bool",
+				"internalType": "uint256",
 				"name": "",
-				"type": "bool"
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "productHistory",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "dataHash",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "updatedBy",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "products",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "producer",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "historyCount",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
