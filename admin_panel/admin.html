@@ -40,7 +40,7 @@
         <button onclick="handleCreateProduct()">Tạo lô hàng</button>
 
         <!-- BỔ SUNG: Khu vực hiển thị mã QR (Mặc định ẩn, chỉ hiện khi tạo thành công) -->
-        <div id="qrContainer">
+        <div id="qrContainer" style="display: none;">
             <h4>✅ Tạo lô hàng thành công!</h4>
             <!-- Nơi vẽ mã QR -->
             <div id="qrResult"></div>
@@ -53,16 +53,13 @@
     <div id="transporterSection">
         <h3>2. Cập nhật trạng thái (Dành cho Vận chuyển)</h3>
         <input type="text" id="productId" placeholder="Mã lô hàng" autocomplete="off">
-        <select id="location">
-            <option value="" disabled selected>-- Chọn vị trí hiện tại --</option>
-            <option value="Nông trại Đồng Tháp">Nông trại Đồng Tháp</option>
-            <option value="Trạm trung chuyển Cần Thơ">Trạm trung chuyển Cần Thơ</option>
-            <option value="Kho lạnh TP.HCM">Kho lạnh TP.HCM</option>
-            <option value="Siêu thị phân phối">Siêu thị phân phối</option>
-        </select>
+        
+        <!-- ĐÃ SỬA: Đổi từ thẻ select sang input để linh hoạt nhập liệu -->
+        <input type="text" id="location" placeholder="Nhập địa điểm hoặc bấm lấy GPS bên dưới..." autocomplete="off">
 
         <button class="gps-button" type="button" onclick="getLocation()">📍 Lấy định vị tự động (GPS)</button>
-        <p id="geoStatus"></p>
+        <p id="geoStatus" style="font-size: 0.9em; color: #17734f; margin-bottom: 10px;"></p>
+        
         <input type="hidden" id="lat" value="">
         <input type="hidden" id="lng" value="">
 

@@ -1,30 +1,52 @@
 let provider, signer, contract;
 
 // ==========================================
-// 0. HÀM ĐỊNH VỊ GPS TỰ ĐỘNG (THÊM MỚI)
+// 0. HÀM ĐỊNH VỊ GPS TỰ ĐỘNG 
 // ==========================================
 function getLocation() {
     const geoStatus = document.getElementById("geoStatus");
-    if (!geoStatus) return; // Nếu nút được bấm từ Khu vực 1 không có id="geoStatus" thì bỏ qua hiển thị
+    const locationInput = document.getElementById("location");
 
-    if (navigator.geolocation) {
-        geoStatus.innerText = "Đang tìm vị trí GPS...";
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                if (document.getElementById("lat")) document.getElementById("lat").value = lat;
-                if (document.getElementById("lng")) document.getElementById("lng").value = lng;
-                geoStatus.innerText = `📍 Đã lấy tọa độ: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-            },
-            (error) => {
-                geoStatus.innerText = "❌ Lỗi: Vui lòng bật định vị và cấp quyền cho trình duyệt.";
-                console.error("Lỗi GPS:", error);
-            }
-        );
-    } else {
-        geoStatus.innerText = "❌ Trình duyệt của bạn không hỗ trợ định vị GPS.";
+    if (!navigator.geolocation) {
+        geoStatus.innerText = "Trình duyệt của bạn không hỗ trợ GPS.";
+        geoStatus.style.color = "red";
+        return;
     }
+
+    geoStatus.innerText = "Đang lấy tọa độ GPS...";
+    geoStatus.style.color = "#666";
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        if (document.getElementById("lat")) document.getElementById("lat").value = lat;
+        if (document.getElementById("lng")) document.getElementById("lng").value = lng;
+
+        geoStatus.innerText = `📍 Đã lấy tọa độ: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+        geoStatus.style.color = "#17734f";
+
+        try {
+            const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=vi`);
+            const data = await response.json();
+            
+            // ĐÃ SỬA: Chỉ lấy Phường/Xã (locality) và Tỉnh/Thành phố (principalSubdivision), bỏ Quận/Huyện (city)
+            const shortAddress = [data.locality, data.principalSubdivision]
+                                 .filter(Boolean).join(", ");
+            
+            if (locationInput) {
+                locationInput.value = shortAddress || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            }
+        } catch (error) {
+            console.error("Lỗi khi tra cứu địa danh:", error);
+            if (locationInput && !locationInput.value) {
+                locationInput.value = `Tọa độ: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            }
+        }
+    }, (error) => {
+        geoStatus.innerText = "🚫 Lỗi: Không thể lấy vị trí (hãy kiểm tra quyền truy cập GPS).";
+        geoStatus.style.color = "red";
+    });
 }
 
 // ==========================================
@@ -138,6 +160,7 @@ async function connectWallet() {
     } catch (error) {
         // Xử lý khi người dùng bấm "Hủy" chữ ký hoặc bị lỗi
         console.error("Lỗi đăng nhập:", error);
+        
         document.getElementById("walletAddress").innerText = "Chưa kết nối ví";
         
         const unauthorizedMsg = document.getElementById("unauthorizedMessage");

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'db.php';
+require '../db.php';
 header('Content-Type: application/json');
 
 // 1. KIỂM TRA QUYỀN: Bắt buộc phải là 'admin' mới được gọi API này

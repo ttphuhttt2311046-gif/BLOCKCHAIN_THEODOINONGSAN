@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-require_once __DIR__ . '/db.php';
+require '../db.php'; 
 
 $data = json_decode(file_get_contents('php://input'));
 if (!is_object($data)) {

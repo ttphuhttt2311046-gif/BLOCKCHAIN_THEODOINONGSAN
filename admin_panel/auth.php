@@ -2,7 +2,7 @@
 session_start();
 header('Content-Type: application/json');
 
-require 'db.php'; 
+require '../db.php'; 
 
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';

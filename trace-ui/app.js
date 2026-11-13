@@ -55,6 +55,17 @@ async function traCuu(dbId) {
       throw new Error(`Số mốc không khớp: DB ${db.history.length}, chain ${chain.length}`);
     }
 
+    // --- ĐÂY LÀ ĐOẠN CODE MỚI THÊM VÀO ĐỂ BẮT GIAN LẬN SẢN PHẨM ---
+    if (db.product.data_hash && chain.length > 0) {
+      const dbProductHash = String(db.product.data_hash).toLowerCase();
+      const chainProductHash = String(chain[0].dataHash).toLowerCase();
+
+      if (dbProductHash !== chainProductHash) {
+        throw new Error("CẢNH BÁO GIẢ MẠO: Thông tin lô hàng (Tên/Mô tả) đã bị chỉnh sửa trái phép so với bản gốc trên Blockchain!");
+      }
+    }
+    // -----------------------------------------------------------
+
     // 3. Băm lại từng dòng DB, so với hash và địa điểm trên chain
     let allOk = true;
     const items = db.history.map((row, i) => {
@@ -109,10 +120,10 @@ function renderMap(history) {
 
   mapDiv.style.display = "block";
   trackingMap = L.map(mapDiv).setView(points[0], 6);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "&copy; OpenStreetMap contributors",
-    maxZoom: 19,
-  }).addTo(trackingMap);
+ L.tileLayer('http://mt0.google.com/vt/lyrs=m&hl=vi&x={x}&y={y}&z={z}', {
+  attribution: '&copy; Google Maps',
+  maxZoom: 19,
+}).addTo(trackingMap);
 
   const polyline = L.polyline(points, { color: "#17734f", weight: 4, opacity: 0.8 }).addTo(trackingMap);
   let pointIndex = 0;
@@ -124,8 +135,20 @@ function renderMap(history) {
     L.marker(point).addTo(trackingMap)
       .bindPopup(`<b>Trạm ${index + 1}: ${esc(row.location)}</b><br>${esc(row.status)}`);
   });
-  trackingMap.fitBounds(polyline.getBounds(), { padding: [24, 24] });
-  setTimeout(() => trackingMap && trackingMap.invalidateSize(), 0);
+  
+  // Xử lý fitBounds tránh lỗi khi chỉ có 1 tọa độ
+  if (points.length > 1) {
+    trackingMap.fitBounds(polyline.getBounds(), { padding: [24, 24] });
+  } else {
+    trackingMap.setView(points[0], 13);
+  }
+  
+  // Tăng thời gian chờ để DOM render xong kích thước mapDiv
+  setTimeout(() => {
+    if (trackingMap) {
+      trackingMap.invalidateSize();
+    }
+  }, 300);
 }
 
 // Mở trang bằng link dạng index.html?id=5 (link trong QR)
