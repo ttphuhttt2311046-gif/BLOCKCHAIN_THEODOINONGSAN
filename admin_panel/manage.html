@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quản lý Tài khoản - Admin</title>
+    <link rel="stylesheet" href="../css/manage.css">
+</head>
+<body>
+
+<div class="container">
+    <p class="page-home"><a href="../index.html" target="_top">← Trang chủ</a></p>
+    <h1>Quản lý tài khoản</h1>
+    <p class="page-description">Phê duyệt tài khoản và cập nhật vai trò người dùng.</p>
+    <p id="statusMsg">Đang tải danh sách...</p>
+    
+    <div class="table-scroll">
+    <table id="usersTable">
+        <thead>
+            <tr>
+                <th>Địa chỉ ví (Wallet)</th>
+                <th>Phân quyền hiện tại</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody id="usersBody">
+            <!-- Dữ liệu sẽ được chèn bằng JS -->
+        </tbody>
+    </table>
+    </div>
+</div>
+
+<script>
+    // Tự động tải danh sách khi mở trang
+    window.onload = loadUsers;
+
+    async function loadUsers() {
+        try {
+            const res = await fetch('./admin_api.php?action=get_users');
+            if (!res.ok) {
+                if (res.status === 403) throw new Error("Bạn chưa đăng nhập Admin bên trang kia, hoặc bạn không có quyền Admin!");
+                throw new Error("Lỗi tải dữ liệu");
+            }
+            const users = await res.json();
+            renderTable(users);
+        } catch (error) {
+            document.getElementById('statusMsg').innerHTML = `<span class="error">🚫 ${error.message}</span>`;
+        }
+    }
+
+    function renderTable(users) {
+        document.getElementById('statusMsg').style.display = 'none';
+        document.getElementById('usersTable').style.display = 'table';
+        const tbody = document.getElementById('usersBody');
+        tbody.innerHTML = '';
+
+        users.forEach(user => {
+            const isPending = user.role === 'pending';
+            const tr = document.createElement('tr');
+            if (isPending) tr.className = 'pending';
+
+            tr.innerHTML = `
+                <td>${user.wallet_address}</td>
+                <td>
+                    <select id="role_${user.wallet_address}">
+                        <option value="pending" ${user.role === 'pending' ? 'selected' : ''}>Chờ duyệt (Pending)</option>
+                        <option value="farmer" ${user.role === 'farmer' ? 'selected' : ''}>Nông dân (Farmer)</option>
+                        <option value="transporter" ${user.role === 'transporter' ? 'selected' : ''}>Vận chuyển (Transporter)</option>
+                        <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Quản trị viên (Admin)</option>
+                    </select>
+                </td>
+                <td>
+                    <button onclick="updateRole('${user.wallet_address}')">Cập nhật</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    async function updateRole(walletAddress) {
+        const newRole = document.getElementById(`role_${walletAddress}`).value;
+        try {
+            const res = await fetch('./admin_api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'update_role', wallet_address: walletAddress, role: newRole })
+            });
+            const data = await res.json();
+            
+            if (res.ok && data.success) {
+                alert("Cập nhật thành công!");
+                loadUsers(); // Tải lại bảng
+            } else {
+                alert("Lỗi: " + data.message);
+            }
+        } catch (error) {
+            alert("Lỗi kết nối tới máy chủ.");
+        }
+    }
+</script>
+
+</body>
+</html>

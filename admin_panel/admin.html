@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quản trị Chuỗi cung ứng</title>
+    <!-- Nhúng thư viện Ethers.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    
+    <!-- BỔ SUNG: Nhúng thư viện tạo mã QR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <link rel="stylesheet" href="../css/admin.css">
+    
+    <!-- BỔ SUNG: Thêm "img-src 'self' data:;" để cho phép hiển thị ảnh QR -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.ethers.io https://cdnjs.cloudflare.com; img-src 'self' data:;">
+</head>
+<body>
+    <main class="admin-page">
+    <p class="page-home"><a href="../index.html" target="_top">← Trang chủ</a></p>
+    <h1>Bảng điều khiển Nông dân &amp; Vận chuyển</h1>
+    <button id="btnConnect" type="button" onclick="connectWallet()">Kết nối Ví MetaMask</button>
+    <p id="walletAddress">Chưa kết nối ví</p>
+    
+    <!-- Cảnh báo lỗi phân quyền (Sẽ bị ẩn mặc định) -->
+    <div id="unauthorizedMessage" style="display: none;">
+        🚫 Ví của bạn không được phân quyền để thao tác trên hệ thống này.
+    </div>
+    
+    <hr>
+
+    <!-- Khu vực 1: Form Khởi tạo lô hàng -->
+    <div id="farmerSection">
+        <h3>1. Khởi tạo lô hàng (Dành cho Nông dân)</h3>
+        <input type="text" id="productName" placeholder="Nhập tên nông sản (VD: Xoài)">
+        <input type="text" id="description" placeholder="Mô tả chi tiết (VD: Xoài cát loại 1)">
+        
+        <button class="gps-button" type="button" onclick="getLocation()">📍 Lấy định vị tự động</button>
+        
+        <button onclick="handleCreateProduct()">Tạo lô hàng</button>
+
+        <!-- BỔ SUNG: Khu vực hiển thị mã QR (Mặc định ẩn, chỉ hiện khi tạo thành công) -->
+        <div id="qrContainer" style="display: none;">
+            <h4>✅ Tạo lô hàng thành công!</h4>
+            <!-- Nơi vẽ mã QR -->
+            <div id="qrResult"></div>
+            <p class="qr-caption">Link tra cứu trực tiếp:</p>
+            <a id="qrLink" href="#" target="_blank" rel="noopener"></a>
+        </div>
+    </div>
+
+    <!-- Khu vực 2: Form Cập nhật trạng thái -->
+    <div id="transporterSection">
+        <h3>2. Cập nhật trạng thái (Dành cho Vận chuyển)</h3>
+        <input type="text" id="productId" placeholder="Mã lô hàng" autocomplete="off">
+        
+        <!-- ĐÃ SỬA: Đổi từ thẻ select sang input để linh hoạt nhập liệu -->
+        <input type="text" id="location" placeholder="Nhập địa điểm hoặc bấm lấy GPS bên dưới..." autocomplete="off">
+
+        <button class="gps-button" type="button" onclick="getLocation()">📍 Lấy định vị tự động (GPS)</button>
+        <p id="geoStatus" style="font-size: 0.9em; color: #17734f; margin-bottom: 10px;"></p>
+        
+        <input type="hidden" id="lat" value="">
+        <input type="hidden" id="lng" value="">
+
+        <select id="status">
+            <option value="Đã thu hoạch">Đã thu hoạch</option>
+            <option value="Đang vận chuyển">Đang vận chuyển</option>
+            <option value="Đã nhập kho">Đã nhập kho</option>
+        </select>
+        <button onclick="handleUpdateStatus()">Cập nhật</button>
+    </div>
+
+    <!-- Lớp phủ Loading (Mặc định ẩn) -->
+    <div id="loadingOverlay" class="hidden">
+        <div class="spinner"></div>
+        <p>Đang chờ thợ đào xác nhận giao dịch...<br>Vui lòng không đóng trình duyệt!</p>
+    </div>
+    </main>
+
+    <!-- BẮT BUỘC: Gọi file biến môi trường TRƯỚC file logic chính -->
+    <script src="../trace-ui/config.php"></script>
+    
+    <!-- File chứa logic xử lý MetaMask và API -->
+    <script src="admin.js"></script>
+</body>
+</html>
