@@ -151,7 +151,10 @@ if ($action === 'create') {
         'hash' => $hash,
         'location' => $location,
     ], JSON_UNESCAPED_UNICODE);
-} elseif ($action === 'update') {
+}
+
+
+elseif ($action === 'update') {
     $key = trim((string)($data->id ?? ''));
     $product = api_find_product($conn, $key);
     if (!$product) {
@@ -166,6 +169,7 @@ if ($action === 'create') {
 
     $lat = api_coordinate($data, 'lat');
     $lng = api_coordinate($data, 'lng');
+
     $productId = (int)$product['id'];
     $chainId = $product['chain_id'] !== null ? (string)$product['chain_id'] : (string)$productId;
     $timestamp = time();
@@ -173,6 +177,7 @@ if ($action === 'create') {
 
     api_insert_history($conn, $productId, $location, $status, $hash, 2, $timestamp, $lat, $lng);
     echo json_encode(['hash' => $hash, 'chain_id' => $chainId], JSON_UNESCAPED_UNICODE);
+
 } elseif ($action === 'confirm_blockchain' || $action === 'setChain') {
     $id = filter_var($data->id ?? null, FILTER_VALIDATE_INT);
     $chainId = trim((string)($data->chain_id ?? ''));
@@ -205,7 +210,11 @@ if ($action === 'create') {
         }
     }
     echo json_encode(['ok' => true]);
-} elseif ($action === 'history') {
+    
+} 
+
+
+elseif ($action === 'history') {
     $key = trim((string)($data->id ?? ''));
     $product = api_find_product($conn, $key);
     if (!$product) {
