@@ -1,8 +1,6 @@
 let provider, signer, contract;
 
-// ==========================================
-// 0. HÀM ĐỊNH VỊ GPS TỰ ĐỘNG 
-// ==========================================
+//  HÀM ĐỊNH VỊ GPS TỰ ĐỘNG 
 function getLocation() {
     const geoStatus = document.getElementById("geoStatus");
     const locationInput = document.getElementById("location");
@@ -30,7 +28,6 @@ function getLocation() {
             const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=vi`);
             const data = await response.json();
             
-            // ĐÃ SỬA: Chỉ lấy Phường/Xã (locality) và Tỉnh/Thành phố (principalSubdivision), bỏ Quận/Huyện (city)
             const shortAddress = [data.locality, data.principalSubdivision]
                                  .filter(Boolean).join(", ");
             
@@ -49,15 +46,12 @@ function getLocation() {
     });
 }
 
-// ==========================================
-// 1. KẾT NỐI VÍ METAMASK, KÝ XÁC THỰC VÀ PHÂN QUYỀN
-// ==========================================
+// KẾT NỐI VÍ METAMASK, KÝ XÁC THỰC VÀ PHÂN QUYỀN
 async function connectWallet() {
     if (!window.ethereum) {
         alert("Vui lòng cài đặt MetaMask!");
         return;
     }
-
     try {
         // Chuyển sang mạng Sepolia
         try {
@@ -79,17 +73,17 @@ async function connectWallet() {
 
         document.getElementById("walletAddress").innerText = "Đang xác thực chữ ký ví...";
 
-        // BƯỚC 1: Lấy mã Nonce từ server auth.php
+        // Lấy mã Nonce từ server auth.php
         const nonceRes = await fetch(`./auth.php?action=get_nonce&address=${address}`);
         const nonceData = await nonceRes.json();
         
         if (!nonceRes.ok) throw new Error(nonceData.message || "Lỗi khi lấy mã xác thực.");
 
-        // BƯỚC 2: Bật popup MetaMask yêu cầu người dùng ký thông báo
+        // Bật popup MetaMask yêu cầu người dùng ký thông báo
         const message = `Chào mừng đến với Hệ thống Truy xuất Nguồn gốc.\n\nMã xác thực của bạn: ${nonceData.nonce}`;
-        const signature = await signer.signMessage(message); // MetaMask sẽ nảy popup ở dòng này!
+        const signature = await signer.signMessage(message); 
 
-        // BƯỚC 3: Gửi chữ ký lên server để kiểm tra và nhận quyền (Role)
+        //  Gửi chữ ký lên server để kiểm tra và nhận quyền (Role)
         const authRes = await fetch('./auth.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -103,7 +97,6 @@ async function connectWallet() {
         const authData = await authRes.json();
 
         if (authRes.ok && authData.success) {
-            // Đăng nhập thành công, đổi tên role ra tiếng Việt cho đẹp
             const roleMap = {
                 'farmer': 'Nông dân',
                 'transporter': 'Vận chuyển',
@@ -114,7 +107,7 @@ async function connectWallet() {
             
             document.getElementById("walletAddress").innerText = `Ví kết nối: ${address} (Vai trò: ${roleName})`;
 
-            // BƯỚC 4: Phân quyền giao diện (UI)
+            // Phân quyền giao diện (UI)
             const farmerSection = document.getElementById("farmerSection");
             const transporterSection = document.getElementById("transporterSection");
             const unauthorizedMsg = document.getElementById("unauthorizedMessage");
@@ -176,9 +169,7 @@ async function connectWallet() {
     }
 }
 
-// ==========================================
-// 2. HÀM HỖ TRỢ HIỂN THỊ LOADING
-// ==========================================
+// HÀM HỖ TRỢ HIỂN THỊ LOADING
 function showLoading() {
     const overlay = document.getElementById("loadingOverlay");
     if (overlay) overlay.classList.remove("hidden");
@@ -189,9 +180,8 @@ function hideLoading() {
     if (overlay) overlay.classList.add("hidden");
 }
 
-// ==========================================
-// 3. XỬ LÝ NÚT: KHỞI TẠO LÔ HÀNG
-// ==========================================
+// KHỞI TẠO LÔ HÀNG
+
 async function handleCreateProduct() {
     if (!contract) {
         alert("Vui lòng kết nối ví MetaMask trước!");
@@ -213,7 +203,6 @@ async function handleCreateProduct() {
     try {
         showLoading(); 
 
-        // Contract cũ dùng bộ đếm ID; contract mới dùng mã lô do API cấp.
         const hasProductCount = window.APP_CONFIG.CONTRACT_ABI.some(
             item => item.type === "function" && item.name === "productCount"
         );
@@ -223,7 +212,7 @@ async function handleCreateProduct() {
             nextChainId = currentCount.toNumber() + 1;
         }
 
-        // BƯỚC 2: Gửi thông tin sang PHP để tạo bản ghi & lấy mã băm Hash
+        //  Gửi thông tin sang PHP để tạo bản ghi & lấy mã băm Hash
         const apiResponse = await fetch("./api.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -246,7 +235,7 @@ async function handleCreateProduct() {
         const dataHash = dbResult.hash;
         const formattedHash = dataHash.startsWith("0x") ? dataHash : "0x" + dataHash;
 
-        // BƯỚC 3: Ký giao dịch gửi Hash lên Blockchain Sepolia
+        // Ký giao dịch gửi Hash lên Blockchain Sepolia
         const createProductAbi = window.APP_CONFIG.CONTRACT_ABI.find(
             item => item.type === "function" && item.name === "createProduct"
         );
@@ -258,10 +247,8 @@ async function handleCreateProduct() {
 
         alert(`Khởi tạo thành công! Mã lô hàng: ${chainId}`);
         
-        // ==========================================
-        // BƯỚC 4: TẠO VÀ HIỂN THỊ MÃ QR CODE (MỚI THÊM)
-        // ==========================================
-        // Tạo link trỏ về trang index.html (trang tra cứu)
+        // TẠO VÀ HIỂN THỊ MÃ QR CODE 
+
         const searchUrl = new URL("../trace-ui/index.html", window.location.href);
         searchUrl.searchParams.set("id", chainId);
         
@@ -304,9 +291,7 @@ async function handleCreateProduct() {
     }
 }
 
-// ==========================================
-// 4. XỬ LÝ NÚT: CẬP NHẬT HÀNH TRÌNH
-// ==========================================
+// CẬP NHẬT HÀNH TRÌNH
 async function handleUpdateStatus() {
     if (!contract) {
         alert("Vui lòng kết nối ví MetaMask trước!");
@@ -329,7 +314,7 @@ async function handleUpdateStatus() {
     try {
         showLoading(); 
 
-        // BƯỚC 1: Gửi thông tin trạm mới sang MySQL
+        //  Gửi thông tin trạm mới sang MySQL
         const apiResponse = await fetch("./api.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -351,10 +336,10 @@ async function handleUpdateStatus() {
         const newHash = dbResult.hash; 
         const formattedNewHash = newHash.startsWith("0x") ? newHash : "0x" + newHash;
         
-        // BƯỚC 2: Ưu tiên dùng chain_id do API trả về.
+        //  Ưu tiên dùng chain_id do API trả về.
         const targetChainId = String(dbResult.chain_id || productId);
 
-        // BƯỚC 3: Gửi Hash trạm mới lên Blockchain theo đúng targetChainId
+        //  Gửi Hash trạm mới lên Blockchain theo đúng targetChainId
         const updateStatusAbi = window.APP_CONFIG.CONTRACT_ABI.find(
             item => item.type === "function" && item.name === "updateStatus"
         );
@@ -380,7 +365,7 @@ async function handleUpdateStatus() {
         hideLoading(); 
     }
 }
-// BẢO MẬT UI: Ẩn tất cả form ngay khi tải trang, bắt buộc phải đăng nhập MetaMask mới hiện
+// Ẩn tất cả form ngay khi tải trang, bắt buộc phải đăng nhập MetaMask mới hiện
 window.addEventListener('DOMContentLoaded', (event) => {
     const farmerSection = document.getElementById("farmerSection");
     const transporterSection = document.getElementById("transporterSection");

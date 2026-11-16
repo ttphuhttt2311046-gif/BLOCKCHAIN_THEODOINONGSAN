@@ -7,12 +7,12 @@
     <!-- Nhúng thư viện Ethers.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     
-    <!-- BỔ SUNG: Nhúng thư viện tạo mã QR -->
+    <!-- Nhúng thư viện tạo mã QR -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <link rel="stylesheet" href="../css/admin.css">
     
-    <!-- BỔ SUNG: Thêm "img-src 'self' data:;" để cho phép hiển thị ảnh QR -->
+    <!--  Thêm "img-src 'self' data:;" để cho phép hiển thị ảnh QR -->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.ethers.io https://cdnjs.cloudflare.com; img-src 'self' data:;">
 </head>
 <body>
@@ -22,7 +22,7 @@
     <button id="btnConnect" type="button" onclick="connectWallet()">Kết nối Ví MetaMask</button>
     <p id="walletAddress">Chưa kết nối ví</p>
     
-    <!-- Cảnh báo lỗi phân quyền (Sẽ bị ẩn mặc định) -->
+    <!-- Cảnh báo lỗi phân quyền  -->
     <div id="unauthorizedMessage" style="display: none;">
         🚫 Ví của bạn không được phân quyền để thao tác trên hệ thống này.
     </div>
@@ -39,7 +39,6 @@
         
         <button onclick="handleCreateProduct()">Tạo lô hàng</button>
 
-        <!-- BỔ SUNG: Khu vực hiển thị mã QR (Mặc định ẩn, chỉ hiện khi tạo thành công) -->
         <div id="qrContainer" style="display: none;">
             <h4>✅ Tạo lô hàng thành công!</h4>
             <!-- Nơi vẽ mã QR -->
@@ -54,7 +53,6 @@
         <h3>2. Cập nhật trạng thái (Dành cho Vận chuyển)</h3>
         <input type="text" id="productId" placeholder="Mã lô hàng" autocomplete="off">
         
-        <!-- ĐÃ SỬA: Đổi từ thẻ select sang input để linh hoạt nhập liệu -->
         <input type="text" id="location" placeholder="Nhập địa điểm hoặc bấm lấy GPS bên dưới..." autocomplete="off">
 
         <button class="gps-button" type="button" onclick="getLocation()">📍 Lấy định vị tự động (GPS)</button>
@@ -71,14 +69,13 @@
         <button onclick="handleUpdateStatus()">Cập nhật</button>
     </div>
 
-    <!-- Lớp phủ Loading (Mặc định ẩn) -->
     <div id="loadingOverlay" class="hidden">
         <div class="spinner"></div>
         <p>Đang chờ thợ đào xác nhận giao dịch...<br>Vui lòng không đóng trình duyệt!</p>
     </div>
     </main>
 
-    <!-- BẮT BUỘC: Gọi file biến môi trường TRƯỚC file logic chính -->
+    <!--  Gọi file biến môi trường TRƯỚC file logic chính -->
     <script src="../trace-ui/config.php"></script>
     
     <!-- File chứa logic xử lý MetaMask và API -->

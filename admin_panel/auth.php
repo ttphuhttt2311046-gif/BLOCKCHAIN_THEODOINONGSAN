@@ -7,9 +7,7 @@ require '../db.php';
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
 
-// =================================================================
-// 1. GET: LẤY NONCE VÀ TỰ ĐỘNG ĐĂNG KÝ NGƯỜI MỚI (ROLE 'PENDING')
-// =================================================================
+// LẤY NONCE VÀ TỰ ĐỘNG ĐĂNG KÝ NGƯỜI MỚI
 if ($method === 'GET' && $action === 'get_nonce') {
     $address = $_GET['address'] ?? '';
     if (empty($address)) {
@@ -47,9 +45,7 @@ if ($method === 'GET' && $action === 'get_nonce') {
     exit;
 }
 
-// =================================================================
-// 2. POST: XÁC MINH CHỮ KÝ METAMASK VÀ TẠO PHIÊN ĐĂNG NHẬP
-// =================================================================
+// XÁC MINH CHỮ KÝ METAMASK VÀ TẠO PHIÊN ĐĂNG NHẬP
 if ($method === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
     
@@ -67,9 +63,7 @@ if ($method === 'POST') {
         if ($user) {
             $expectedMessage = "Chào mừng đến với Hệ thống Truy xuất Nguồn gốc.\n\nMã xác thực của bạn: " . $user['nonce'];
             
-            // ---------------------------------------------------------
             // XÁC THỰC CHỮ KÝ (SIGNATURE VERIFICATION)
-            // ---------------------------------------------------------
             $isValidSignature = !empty($signature); 
 
             if ($isValidSignature) {
